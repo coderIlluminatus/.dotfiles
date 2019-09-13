@@ -11,7 +11,8 @@ export TERM="xterm-256color"
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="powerlevel9k/powerlevel9k"
+# git clone https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+ZSH_THEME="powerlevel10k/powerlevel10k"
 [ -f ~/.powerlevelrc ] && source ~/.powerlevelrc
 
 # Set list of themes to load
@@ -77,6 +78,7 @@ plugins=(
   git
   docker
   docker-compose
+  vi-mode
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
