@@ -7,6 +7,7 @@ export EDITOR=vim
 export GUI_EDITOR=code
 export VISUAL=vim
 export TERM="xterm-256color"
+export DEFAULT_USER="illuminatus"
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
