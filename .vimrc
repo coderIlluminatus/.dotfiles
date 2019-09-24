@@ -9,13 +9,14 @@ set binary
 set ttyfast
 set ffs=unix,dos,mac            " set file encoding priority order
 
-set tabstop=4
-set softtabstop=4
-set expandtab
-set smarttab
+set tabstop=4                   " set width of a hard TAB
+set shiftwidth=4                " set width of an indent (indent = m x TABs + n x spaces)
+set softtabstop=4               " set columns for a tab
+set expandtab                   " expand TABs to spaces
+set autoindent                  " copy indent from current line when starting a new line
+set smarttab                    " insert blanks on tab according to sw (otherwise uses ts, sts)
 
-set autoindent                  " file-specific indenting on newline
-set backspace=indent,eol,start
+set backspace=indent,eol,start  " backspace over indentation, eol, beginning of insert mode
 set wrap                        " wrap lines
 
 set number relativenumber       " show line numbers relative to the current line
@@ -128,6 +129,7 @@ map Y y$                                    " introduce copy line
 
 ""Press jk to quit Input Mode
 inoremap jk <esc>
+xnoremap jk <esc>
 
 "" Code folding
 inoremap <F9> <C-O>za
