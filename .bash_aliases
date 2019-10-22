@@ -63,6 +63,9 @@ alias yt='f() { cp $1 ~/TV }; f'
 alias w='f() { cd ~/work/$1 }; f'
 alias wcl='f() { git clone git@github.com:$(git config --get credential.https://github.com.username)/$1.git ~/work/$1 }; f'
 
+alias tmux='TERM=xterm-256color tmux -f ~/.config/tmux/tmux.conf'
+alias dev='f() { chmod 777 ~/.config/tmux/$1 && ~/.config/tmux/$1 }; f'
+
 alias attach='tmux attach-session -t'
 alias cozy='flatpak run com.github.geigi.cozy'
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
