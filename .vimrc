@@ -110,14 +110,34 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 "" Search current selection in visual mode
+function! CmdLine(str)
+    call feedkeys(":" . a:str)
+endfunction
+
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", "\\/.*'$^~[]")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'gv'
+        call CmdLine("Rg '" . l:pattern . "' " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
 vnoremap <silent> * :call VisualSelection('f', '')<CR>
 vnoremap <silent> # :call VisualSelection('b', '')<CR>
 
-"""" Session management
-let g:session_directory = "~/.vim/session"
-let g:session_autoload = "no"
-let g:session_autosave = "no"
-let g:session_command_aliases = 1
+"""" Cleaner backup, swap and undo files
+set backupdir=.backup/,~/.backup/,/tmp//
+set directory=.swp/,~/.swp/,/tmp//
+set undodir=.undo/,~/.undo/,/tmp//
 
 """" Key Bindings
 
@@ -137,10 +157,6 @@ nnoremap <F9> za
 onoremap <F9> <C-C>za
 vnoremap <F9> zf
 
-"" Character navigation
-map - ^
-map = $
-
 "" Split
 noremap <Leader>h :<C-u>split<CR>
 noremap <Leader>v :<C-u>vsplit<CR>
@@ -150,22 +166,6 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
-
-"" Git
-noremap <Leader>ga :Gwrite<CR>
-noremap <Leader>gc :Gcommit<CR>
-noremap <Leader>gsh :Gpush<CR>
-noremap <Leader>gll :Gpull<CR>
-noremap <Leader>gs :Gstatus<CR>
-noremap <Leader>gb :Gblame<CR>
-noremap <Leader>gd :Gvdiff<CR>
-noremap <Leader>gr :Gremove<CR>
-
-" session management
-nnoremap <leader>so :OpenSession<Space>
-nnoremap <leader>ss :SaveSession<Space>
-nnoremap <leader>sd :DeleteSession<CR>
-nnoremap <leader>sc :CloseSession<CR>
 
 "" Tabs
 nnoremap <leader>tn :tabnew<cr>
@@ -190,10 +190,7 @@ nnoremap <leader>x :cclose<CR>
 
 "" Buffer navigation
 noremap <leader>z :bp<CR>
-noremap <leader>q :bp<CR>
 noremap <leader>x :bn<CR>
-noremap <leader>w :bn<CR>
-noremap <leader>c :bd<CR>       " close buffer
 
 
 "" Indent and move code blocks
@@ -203,7 +200,8 @@ vnoremap > >gv                  " indent right
 "" Use urlview to choose and open a url:
 :noremap <leader>u :w<Home>silent <End> !urlview<CR>
 
-
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 """" Miscellaneous shortcuts
 cnoreabbrev W! w!
@@ -221,7 +219,7 @@ cnoreabbrev Qall qall
 
 """" Auto-commands
 
-" Automatic relaoding of .vimrc on save
+" Automatic reloading of .vimrc on save
     autocmd BufWritePost ~/.vimrc source %
 
 " Automatically deletes all trailing whitespace on save.
@@ -234,6 +232,12 @@ cnoreabbrev Qall qall
 
     autocmd BufWritePre * :call <SID>StripTrailingWhitespaces()
 
+" Automatically save and reload folds
+augroup folding
+    au BufWinLeave * mkview
+    au BufWinEnter * silent loadview
+augroup END
+
 " Run xrdb whenever Xdefaults or Xresources are updated.
 	autocmd BufWritePost ~/.Xresources,~/.Xdefaults !xrdb %
 
@@ -242,6 +246,10 @@ cnoreabbrev Qall qall
 " html
 " for html files, 2 spaces
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
+
+
+" css
+au! FileType css,scss setl iskeyword+=-
 
 
 " javascript
@@ -329,7 +337,7 @@ let python_highlight_all = 1
 let g:terraform_align=1
 let g:terraform_fmt_on_save=1
 
-"""" Plugin specific configs
+"""" Plugin-specific configs and bindings
 
 "" Vim Airline
 if !exists('g:airline_symbols')
@@ -377,7 +385,7 @@ let g:airline#extensions#virtualenv#enabled = 1
 
 
 
-"" NERDTree configuration
+"" NERDTree
 let g:NERDTreeChDirMode=2
 let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
 let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
@@ -388,6 +396,30 @@ let g:NERDTreeWinSize = 50
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
 nnoremap <silent> <F2> :NERDTreeFind<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
+
+
+
+"" vim-session
+let g:session_directory = "~/.vim/session"
+let g:session_autoload = "no"
+let g:session_autosave = "no"
+let g:session_command_aliases = 1
+nnoremap <leader>so :OpenSession<Space>
+nnoremap <leader>ss :SaveSession<Space>
+nnoremap <leader>sd :DeleteSession<CR>
+nnoremap <leader>sc :CloseSession<CR>
+
+
+
+"" vim-fugitive
+noremap <Leader>ga :Gwrite<CR>
+noremap <Leader>gc :Gcommit<CR>
+noremap <Leader>gsh :Gpush<CR>
+noremap <Leader>gll :Gpull<CR>
+noremap <Leader>gs :Gstatus<CR>
+noremap <Leader>gb :Gblame<CR>
+noremap <Leader>gd :Gvdiff<CR>
+noremap <Leader>gr :Gremove<CR>
 
 
 
@@ -487,9 +519,9 @@ inoremap <silent><expr> <c-space> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-" Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+" Use `[d` and `]d` to navigate diagnostics
+nmap <silent> [d <Plug>(coc-diagnostic-prev)
+nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
