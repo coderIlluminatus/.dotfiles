@@ -1,0 +1,43 @@
+set -g status-justify "left"
+set -g status-left-length "100"
+set -g status "on"
+set -g status-right-length "160"
+set -g status-right-style none
+set -g message-style bg=terminal,fg=white
+set -g status-style none
+set -g pane-border-style bg=default
+set -g pane-active-border-style bg=default,fg=colour2
+set -g pane-border-style fg=colour240
+set -g status-left-style none
+
+# Status bar colors.
+set-window-option -g status-style fg=brightyellow,bg=brightblack,none
+
+# Window list colors.
+set-window-option -g window-status-style fg=brightgreen,bg=default,none
+set-window-option -g window-status-current-style fg=colour136,bg=default,bold
+set-window-option -g window-status-last-style fg=colour245,bg=default,bold
+set-window-option -g window-status-activity-style fg=brightgreen,bg=default,none
+
+# Pane divider colors.
+set-option -g pane-border-style fg=brightyellow,bg=default
+set-option -g pane-active-border-style fg=yellow,bg=default
+
+# Command-line messages colors.
+set-option -g message-style fg=brightyellow,bg=brightwhite
+
+# Set left and right sections.
+set-option -g status-left-length 20
+set-option -g status-left "#[fg=brightred,bg=terminal] <#S>"
+set-option -g status-right "#[fg=colour37,bg=terminal] #(ipconfig getifaddr en0) | %d/%m/%Y,%l:%M %p "
+
+# Set format of items in window list.
+setw -g window-status-format " #I #W "
+setw -g window-status-current-format " #I #W "
+
+# Set alignment of windows list.
+set-option -g status-justify centre
+
+# Identify activity in non-current windows.
+set-window-option -g monitor-activity on
+set-option -g visual-activity on
