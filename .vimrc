@@ -135,9 +135,19 @@ vnoremap <silent> * :call VisualSelection('f', '')<CR>
 vnoremap <silent> # :call VisualSelection('b', '')<CR>
 
 """" Cleaner backup, swap and undo files
-set backupdir=.backup/,~/.backup/,/tmp//
-set directory=.swp/,~/.swp/,/tmp//
-set undodir=.undo/,~/.undo/,/tmp//
+if !isdirectory($HOME."/.vim/backup")
+    call mkdir($HOME."/.vim/backup", "", 0700)
+endif
+set backupdir=~/.vim/backup//
+if !isdirectory($HOME."/.vim/swp")
+    call mkdir($HOME."/.vim/swp", "", 0700)
+endif
+set directory=~/.vim/swp//
+if !isdirectory($HOME."/.vim/undo")
+    call mkdir($HOME."/.vim/undo", "", 0700)
+endif
+set undodir=~/.vim/undo//
+set undofile
 
 """" Key Bindings
 
@@ -146,6 +156,12 @@ let mapleader=','
 
 nnoremap <leader>jk :nohlsearch<CR>         " turn off highlights after search
 map Y y$                                    " introduce copy line
+
+" Press enter for newline without insert
+nnoremap <cr> O<esc>
+" but don't effect command line mode
+autocmd CmdwinEnter * nnoremap <CR> <CR>
+autocmd CmdwinLeave * nnoremap <cr> o<esc>
 
 ""Press jk to quit Input Mode
 inoremap jk <esc>
@@ -236,6 +252,12 @@ cnoreabbrev Qall qall
 augroup folding
     au BufWinLeave * mkview
     au BufWinEnter * silent loadview
+augroup END
+
+" Periodically check for file changes
+augroup file-refresh
+    autocmd!
+    autocmd CursorHold * silent! checktime
 augroup END
 
 " Run xrdb whenever Xdefaults or Xresources are updated.
@@ -336,6 +358,10 @@ let python_highlight_all = 1
 " terraform
 let g:terraform_align=1
 let g:terraform_fmt_on_save=1
+" augroup tfvars
+"   autocmd!
+"   autocmd BufNewFile,BufRead *.tfvars set filetype=tfvars
+" augroup END
 
 """" Plugin-specific configs and bindings
 
@@ -402,7 +428,7 @@ nnoremap <silent> <F3> :NERDTreeToggle<CR>
 "" vim-session
 let g:session_directory = "~/.vim/session"
 let g:session_autoload = "no"
-let g:session_autosave = "no"
+let g:session_autosave = "yes"
 let g:session_command_aliases = 1
 nnoremap <leader>so :OpenSession<Space>
 nnoremap <leader>ss :SaveSession<Space>

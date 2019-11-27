@@ -37,6 +37,11 @@
       "initializationOptions": {
         "storagePath": "/tmp/intelephense"
       }
+    },
+    "terraform": {
+      "command": "terraform-lsp",
+      "filetypes": ["terraform"],
+      "initializationOptions": {}
     }
   },
   "prettier.printWidth": 160,
