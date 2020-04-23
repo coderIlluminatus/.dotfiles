@@ -27,7 +27,7 @@ set showcmd                     " show partial commands in the last line of the 
 set foldenable                  " enable code folding
 set showmatch                   " highlight matching parentheses
 set wildmenu                    " better command-line completion
-set visualbell                  " use visual bell instead of beeping when doing something wrong
+" set visualbell                  " use visual bell instead of beeping when doing something wrong
 set confirm                     " raise dialog instead of failing a command due to unsaved changes
 
 set splitbelow                  " open new split pane to the bottom
@@ -54,19 +54,17 @@ if filereadable(expand("~/.vimrc.local.bundles"))
   source ~/.vimrc.local.bundles
 endif
 
+
+
 """" Appearance
 
-"" Set colorscheme
-set background=dark
-colorscheme solarized
+set mousemodel=popup
+" set t_Co=256
+set guioptions=egmrti
 
 syntax enable                   " enable syntax highlighting
 filetype plugin indent on       " use filetype-based highlighting
 set laststatus=2                " always display status line, even on single window
-
-set mousemodel=popup
-set t_Co=256
-set guioptions=egmrti
 
 if has("gui_running")
   if has("gui_mac") || has("gui_macvim")
@@ -89,13 +87,23 @@ else
     if $TERM == 'xterm'
       set term=xterm-256color
     endif
+    if has('termguicolors')
+      set termguicolors
+    endif
   endif
 
 endif
 
+"" Set colorscheme
+set background=dark
+colorscheme gruvbox8
+
+
 if exists("*fugitive#statusline")
   set statusline+=%{fugitive#statusline()}
 endif
+
+
 
 """" Search
 set incsearch                   " search incrementally as characters are entered
@@ -149,13 +157,15 @@ endif
 set undodir=~/.vim/undo//
 set undofile
 
+
+
 """" Key Bindings
 
 "" Map leader to ,
 let mapleader=','
 
 nnoremap <leader>jk :nohlsearch<CR>         " turn off highlights after search
-map Y y$                                    " introduce copy line
+map Y y$
 
 " Press enter for newline without insert
 nnoremap <cr> O<esc>
@@ -178,10 +188,16 @@ noremap <Leader>h :<C-u>split<CR>
 noremap <Leader>v :<C-u>vsplit<CR>
 
 "" Split navigation
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+nnoremap <C-j> <C-W><C-J>
+nnoremap <C-k> <C-W><C-K>
+nnoremap <C-l> <C-W><C-L>
+nnoremap <C-h> <C-W><C-H>
+
+"" Split resize
+nnoremap <C-S-j> :resize -2<CR>
+nnoremap <C-S-k> :resize +2<CR>
+nnoremap <C-S-l> :vertical resize +2<CR>
+nnoremap <C-S-h> :vertical resize -2<CR>
 
 "" Tabs
 nnoremap <leader>tn :tabnew<cr>
@@ -209,15 +225,27 @@ noremap <leader>z :bp<CR>
 noremap <leader>x :bn<CR>
 
 
-"" Indent and move code blocks
-vnoremap < <gv                  " indent left
-vnoremap > >gv                  " indent right
+"" Indent code blocks
+vnoremap < <gv
+vnoremap > >gv
+
+
+"" Move code blocks
+nnoremap <S-Down> :m .+1<CR>==
+nnoremap <S-Up> :m .-2<CR>==
+inoremap <S-Down> <Esc>:m .+1<CR>==gi
+inoremap <S-Up> <Esc>:m .-2<CR>==gi
+vnoremap <S-Down> :m '>+1<CR>gv=gv
+vnoremap <S-Up> :m '<-2<CR>gv=gv
+
 
 "" Use urlview to choose and open a url:
 :noremap <leader>u :w<Home>silent <End> !urlview<CR>
 
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+
 
 """" Miscellaneous shortcuts
 cnoreabbrev W! w!
@@ -250,8 +278,8 @@ cnoreabbrev Qall qall
 
 " Automatically save and reload folds
 augroup folding
-    au BufWinLeave * mkview
-    au BufWinEnter * silent loadview
+    " au BufWinLeave * mkview
+    " au BufWinEnter * silent loadview
 augroup END
 
 " Periodically check for file changes
@@ -262,6 +290,8 @@ augroup END
 
 " Run xrdb whenever Xdefaults or Xresources are updated.
 	autocmd BufWritePost ~/.Xresources,~/.Xdefaults !xrdb %
+
+
 
 """" Language specific configs
 
@@ -280,7 +310,7 @@ let g:javascript_enable_domhtmlcss = 1
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript set tabstop=4|set shiftwidth=4|set expandtab softtabstop=4
+  autocmd FileType javascript set tabstop=2|set shiftwidth=2|set expandtab softtabstop=2
 augroup END
 
 
@@ -345,9 +375,6 @@ let g:jedi#smart_auto_mappings = 0
 " syntastic
 let g:syntastic_python_checkers=['python', 'flake8']
 
-" vim-airline
-let g:airline#extensions#virtualenv#enabled = 1
-
 " Syntax highlight
 " Default highlight is better than polyglot
 " Disable latex in polyglot to use vimtex
@@ -362,6 +389,8 @@ let g:terraform_fmt_on_save=1
 "   autocmd!
 "   autocmd BufNewFile,BufRead *.tfvars set filetype=tfvars
 " augroup END
+
+
 
 """" Plugin-specific configs and bindings
 
@@ -400,11 +429,12 @@ else
   let g:airline_symbols.readonly = ''
   let g:airline_symbols.linenr = ''
 endif
-let g:airline_theme = 'solarized'
+let g:airline_theme = 'gruvbox'
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline_skip_empty_sections = 1
 let g:airline#extensions#virtualenv#enabled = 1
@@ -440,12 +470,14 @@ nnoremap <leader>sc :CloseSession<CR>
 "" vim-fugitive
 noremap <Leader>ga :Gwrite<CR>
 noremap <Leader>gc :Gcommit<CR>
-noremap <Leader>gsh :Gpush<CR>
-noremap <Leader>gll :Gpull<CR>
+noremap <Leader>gps :Gpush<CR>
+noremap <Leader>gpl :Gpull<CR>
 noremap <Leader>gs :Gstatus<CR>
 noremap <Leader>gb :Gblame<CR>
 noremap <Leader>gd :Gvdiff<CR>
 noremap <Leader>gr :Gremove<CR>
+noremap <Leader>gh :diffget //2<CR>
+noremap <Leader>gl :diffget //3<CR>
 
 
 
@@ -455,6 +487,40 @@ set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
+
+" The Silver Searcher
+if executable('ag')
+  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+  set grepprg=ag\ --nogroup\ --nocolor
+endif
+
+" ripgrep
+if executable('rg')
+    let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!{.git, node_modules}"'
+  set grepprg=rg\ --vimgrep
+  command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!{.git, node_modules}" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+endif
+
+"Get Files
+command! -bang -nargs=? -complete=dir Files
+    \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
+
+" Get text in files with Rg
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview(), <bang>0)
+
+" Ripgrep advanced
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 fun! FzfOmniFiles()
   let is_git = system('git status')
@@ -481,21 +547,6 @@ nnoremap <silent> <leader>O         :Tags<CR>                   " all tags
 
 
 
-"" CtrlP
-" nnoremap <Leader>o :CtrlPMRUFiles<CR>
-" nnoremap <Leader>p :CtrlP<CR>
-
-" let g:ctrlp_mruf_exclude = '.*/tmp/.*\|.*/.git/.*'
-" let g:ctrlp_max_files = 200000
-" let g:ctrlp_mruf_relative = 1
-" let g:ctrlp_show_hidden = 1
-" let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-" let g:ctrlp_working_path_mode='ra'
-" let g:ctrlp_cmd = 'CtrlPMixed'
-" set autochdir
-
-
-
 "" ALE
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
@@ -507,6 +558,7 @@ nmap <Leader>ah :ALEHover<CR>
 nmap <Leader>ar :ALEFindReferences<CR>
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
+
 
 
 "" Ultisnips
@@ -632,6 +684,14 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
+" Add Prettier command
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
 
 " Disable vim-go definition mapping
 let g:go_def_mapping_enabled = 0
+
+
+
+""vim-slime
+let g:slime_target = "kitty"
