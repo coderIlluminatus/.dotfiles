@@ -59,3 +59,29 @@ class my_edit(Command):
         # This is a generic tab-completion function that iterates through the
         # content of the current directory.
         return self._tab_directory_content()
+
+
+class mpa(Command):
+    """:mpa
+
+    Play selected files using a custom mpv playlist
+    """
+    def execute(self):
+        import subprocess
+        import sys
+        import tempfile
+        from ranger.container.file import File
+        filenames = [f.path for f in self.fm.thistab.get_selection()]
+        py3 = sys.version_info[0] >= 3
+        if not filenames:
+            return
+        playlistfile = tempfile.NamedTemporaryFile(delete=False)
+        playlistpath = playlistfile.name
+        if py3:
+            playlistfile.write("\n".join(filenames).encode("utf-8"))
+        else:
+            playlistfile.write("\n".join(filenames))
+        playlistfile.close()
+        self.fm.execute_command("mpv --playlist=" + playlistpath,
+                                stdout=subprocess.PIPE,
+                                flags="f")
