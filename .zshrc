@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -6,7 +13,7 @@ export ZSH=$HOME/.oh-my-zsh
 export EDITOR=vim
 export GUI_EDITOR=code
 export VISUAL=vim
-export TERM="xterm-256color"
+export TERM="xterm-kitty"
 export DEFAULT_USER="illuminatus"
 
 # Set name of the theme to load. Optionally, if you set this to "random"
@@ -16,7 +23,9 @@ export DEFAULT_USER="illuminatus"
 # Add powerlevel10k theme
 # git clone https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
 ZSH_THEME="powerlevel10k/powerlevel10k"
-[ -f ~/.powerlevelrc ] && source ~/.powerlevelrc
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Set list of themes to load
 # Setting this variable when ZSH_THEME=random
@@ -85,6 +94,8 @@ plugins=(
   docker
   docker-compose
   fzf-docker
+  kops
+  kubectl
   vi-mode
   zsh-autosuggestions
   zsh-syntax-highlighting
@@ -149,13 +160,37 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
 #     cmd_exec_time
 #   )
 
-export PATH="/home/illuminatus/anaconda3/bin:$PATH"
+# export PATH="/home/illuminatus/anaconda3/bin:$PATH"  # commented out by conda initialize
+
+export PATH="$HOME/.scripts:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 export FZF_COMPLETION_TRIGGER=','
+
+[ -f /etc/bash_completion.d/azure-cli ] && source /etc/bash_completion.d/azure-cli
+
+# Yarn path fix
+export PATH="$(yarn global bin):$PATH"
 
 # Fix for docker plugin not loading
 fpath+=($ZSH/plugins/docker)
 autoload -U compinit && compinit
 
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('$HOME/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="$HOME/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
