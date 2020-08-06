@@ -89,9 +89,14 @@ bindsym $mod+Ctrl+l resize grow width 5 px or 5 ppt
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Ctrl+Left resize shrink width 5 px or 5 ppt
-bindsym $mod+Ctrl+Up grow height 5 px or 5 ppt
-bindsym $mod+Ctrl+Down shrink height 5 px or 5 ppt
-bindsym $mod+Ctrl+Right grow width 5 px or 5 ppt
+bindsym $mod+Ctrl+Up resize grow height 5 px or 5 ppt
+bindsym $mod+Ctrl+Down resize shrink height 5 px or 5 ppt
+bindsym $mod+Ctrl+Right resize grow width 5 px or 5 ppt
+
+# set standard widths for quick resize
+bindsym $mod+Ctrl+i resize set width 33 ppt
+bindsym $mod+Ctrl+o resize set width 50 ppt
+bindsym $mod+Ctrl+p resize set width 66 ppt
 
 # split
 # bindsym $mod+Ctrl+h split h
@@ -183,11 +188,23 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 # Touchpad controls
 bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 
-# Media player controls
+# Media player controls - generic
 bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioStop exec playerctl stop
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
+
+# Media player controls - dedicated to Spotify
+bindsym Shift+XF86AudioPlay exec playerctl --player=spotify play-pause
+bindsym Shift+XF86AudioStop exec playerctl --player=spotify stop
+bindsym Shift+XF86AudioNext exec playerctl --player=spotify next
+bindsym Shift+XF86AudioPrev exec playerctl --player=spotify previous
+
+# Media player controls - dedicated to cozy
+bindsym Ctrl+XF86AudioPlay exec playerctl --player=Cozy play-pause
+bindsym Ctrl+XF86AudioStop exec playerctl --player=Cozy stop
+bindsym Ctrl+XF86AudioNext exec playerctl --player=Cozy next
+bindsym Ctrl+XF86AudioPrev exec playerctl --player=Cozy previous
 
 # application shortcuts
 bindsym Mod1+a exec flatpak run com.github.geigi.cozy
@@ -326,7 +343,7 @@ client.urgent           $red        $red        $gray       $red        $red
 exec --no-startup-id feh --bg-center $HOME/wallpaper.png
 # exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=secrets
 # exec --no-startup-id i3-msg "workspace $ws1; exec google-chrome --password-store=gnome"
-exec_always --no-startup-id compton
+# exec_always --no-startup-id compton
 # exec --no-startup-id flashfocus
 # exec --no-startup-id flatpak run com.github.geigi.cozy
 exec --no-startup-id ibus-daemon
@@ -338,7 +355,7 @@ exec --no-startup-id ibus-daemon
 #*********************************************************************************
 
 gaps inner 15
-gaps outer 10
+gaps outer 15
 smart_gaps on
 smart_borders on
 

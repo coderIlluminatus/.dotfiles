@@ -1,6 +1,6 @@
 configuration {
-    display-drun:                   "Apps";
-    display-window:                 "Window";
+    display-drun:       "Apps";
+    display-window:     "Window";
     show-icons:true;
 }
 
@@ -10,7 +10,7 @@ configuration {
     background-color: #282828;
     border-color: #00000000;
     text-color: #fbf1c7;
-    font: "FiraCode Nerd Font 12";
+    font: "JetBrains Mono Nerd Font 12";
 }
 
 #window {
